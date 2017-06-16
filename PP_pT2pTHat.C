@@ -29,25 +29,53 @@ void PP_pT2pTHat()
 	line2 -> SetParameter(0, 0.0);
 	line2 -> SetParameter(1, 1.0);	
 
-	// set up plots
-	cout << endl << "############# Fit for p_{T}_Hat [20,50] ################" << endl;
+	TF1 *line4 = new TF1("line4", "pol1", 40, 100);
+	line4 -> SetParameter(0, 0.0);
+	line4 -> SetParameter(1, .5);	
+
+	TF1 *line5 = new TF1("line5", "pol1", 160, 240);
+	line5 -> SetParameter(0, 0.0);
+	line5 -> SetParameter(1, .5);	
+
+	TF1 *line6 = new TF1("line6", "pol1", 280, 300);
+	line6 -> SetParameter(0, 0.0);
+	line6 -> SetParameter(1, .5);
+
+
+	// ############ Get plots from file ############
 	TH2F *h2 = (TH2F*)f2->Get("pT2pTHat");
-	TProfile *ph2 = (TProfile*)h2->ProfileX("20-50");
-	ph2->Fit(line2, "RMN+ w=1");
-
-
-	cout << endl << "############# Fit for p_{T}_Hat [80,120] ################" << endl;
 	TH2F * h1 = (TH2F*)f1->Get("pT2pTHat"); 
-	TProfile *ph1 = (TProfile*)h1->ProfileX("80-120");
-	ph1->Fit(line1, "RMN+ w=1");
-
-	cout << endl << "############# Fit for p_{T}_Hat [140,200] ################" << endl;
 	TH2F *h3 = (TH2F*)f3->Get("pT2pTHat");
+	TH2F *sum1 = (TH2F*)f2->Get("sumpT");
+	TH2F *sum2 = (TH2F*)f1->Get("sumpT");
+	TH2F *sum3 = (TH2F*)f3->Get("sumpT");
+
+	// ############ Make profile of plots ##########
+	TProfile *ph2 = (TProfile*)h2->ProfileX("20-50");
+	TProfile *ph1 = (TProfile*)h1->ProfileX("80-120");
 	TProfile *ph3 = (TProfile*)h3->ProfileX("140-200");
-	ph3->Fit(line3, "RMN+ w=1");
+	TProfile *psum1 = (TProfile*)sum1->ProfileX("sum1");
+	TProfile *psum2 = (TProfile*)sum2->ProfileX("sum2");
+	TProfile *psum3 = (TProfile*)sum3->ProfileX("sum3");
+
+	// ########### Fit profiles ##############
+	cout << endl << "############# Fit for p_{T}_Hat [20,50] ################" << endl;
+	ph2->Fit(line2, "RMNL+ w=1");
+	cout << endl << "############# Fit for p_{T}_Hat [80,120] ################" << endl;
+	ph1->Fit(line1, "RMNL+ w=1");
+	cout << endl << "############# Fit for p_{T}_Hat [140,200] ################" << endl;
+	ph3->Fit(line3, "RMNL+ w=1");
+	cout << endl << "################### Fit for pT sum1  ######################" << endl;
+	psum1->Fit(line4, "RMNL+ w=1");
+	cout << endl << "################### Fit for pT sum2  ######################" << endl;
+	psum2->Fit(line5, "RMNL+ w=1");
+	cout << endl << "################### Fit for pT sum3  ######################" << endl;
+	psum3->Fit(line6, "RMNL+ w=1");
 
 
-	// set up canvas and draw 
+	//######## Graph ##################
+
+	// Canvas 1
 	TCanvas *c1=  new TCanvas();
 	c1->SetLogz();
 
@@ -57,5 +85,17 @@ void PP_pT2pTHat()
 	line1->Draw("same");
 	line2->Draw("same");
 	line3->Draw("same");
+	line4->Draw("same");
+
+	// Canvas 2
+	TCanvas *c2=new TCanvas("Sum of pT from outgoing partons");
+	c2->SetLogz();
+
+	sum1->Draw("contz");
+	sum2->Draw("cont, sames");
+	sum3->Draw("cont, sames");
+	line4->Draw("same");
+	line5->Draw("same");
+	line6->Draw("same");
 
 }
