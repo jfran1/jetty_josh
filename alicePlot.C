@@ -72,13 +72,14 @@ void alicePlot()
 	else cout << "File 17 Opened!" << endl;	
 	f17->cd("Table 1");
 
-
 	// Setting up arrays of histograms and files
 	TFile *files[16] = {f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16};
 	gStyle->SetPalette(100);
 	TH1F *hpT[16];
 	TH1F *sumHpT[16];
+	TH1F *raw[16];
 	TH1F *HEP = (TH1F*)f17->Get("Hist1D_y3_e2");
+	TH2F *eta2pT[16];
 
 	//Drawing On Canvas 1
 	TCanvas *c1 = new TCanvas("c1");
@@ -87,6 +88,7 @@ void alicePlot()
 	{
 		hpT[i] = (TH1F*)files[i]->Get("hpT");
 		sumHpT[i] = (TH1F*)files[i]->Get("hpT");
+		raw[i] = (TH1F*)files[i]->Get("hpTRaw");
 		hpT[0]->SetMinimum(10e-10);
 		if (i%2 == 0) 
 		{
@@ -105,14 +107,21 @@ void alicePlot()
 	for (int i =1; i<16; i++)
 	{
 		sumHpT[0]->Add(sumHpT[i]);
-		
+		raw[0]->Add(raw[i]);
 	}
+
 	TCanvas *c2 = new TCanvas("c2");
 	c2->SetLogy();
 	sumHpT[0]->SetTitle("");
 	sumHpT[0]->SetLineColor(kRed);
 	sumHpT[0]->Draw("hist");
-	HEP->Draw("hist same");
+	raw[0]->Draw("hist same");
+
+
+
+
+
+
 
 
 }

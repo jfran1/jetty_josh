@@ -18,7 +18,6 @@ void alice2()
 	TH1F *h2 = (TH1F*)f1->Get("data");
 	TH1F *h3 = (TH1F*)f1->Get("hpTRaw");
 	
-
 	// make linear pT function 
 	TF1 *line = new TF1("line", "pol1", 0,100);
 	line->SetParameter(0,0);
@@ -29,28 +28,24 @@ void alice2()
 	double weightSum = h2->GetBinContent(2);
 	double binWidth = h2->GetBinContent(3);
 
+	cout << "Cross Section: " << sigma << endl;
+	cout << "weightSum: " << weightSum << endl;
+	cout << "Bin Width: " << binWidth << endl;
+
 	//Draw plots with and without scaling
 	TCanvas *c1 = new TCanvas("c1");
 	c1->SetLogy();
-
-	h1->SetLineColor(kRed);
-	//h1->Draw("hist");
 	h3->SetLineColor(kGreen);
-	h3->Scale( (sigma/10000) / (2*TMath::Pi() * weightSum * binWidth) );
+	h3->Scale( sigma / ( 2*TMath::Pi() * weightSum * binWidth * 2 * TMath::Pi() * 1000) );
 	h3->Divide(line);
-	h3->Draw("hist");
+	h3->Draw("hist same");
 	HEP->SetLineColor(kBlack);
 	HEP->Draw("hist same");
-
 
 	TLegend *leg = new TLegend();
 	leg->AddEntry(h3, "Pythia8 |#eta| < 0.8", "L");
 	leg->AddEntry(HEP, "Alice |#eta| < 0.8", "L");
 	leg->Draw("same");
-
-
-
-
-
+	
 
 }
