@@ -35,31 +35,38 @@ void plot13TeV()
 	double sigma[2];
 	double binWidth[2];
 	double weightSum[2];
+	double dEta = 0.8;
 
 	// 0=minbias, 1=inel 
 	for (int i=0; i < 2;i++)
 	{
 		data[i] = (TH1F*)files[i]->Get("data");
 		sigma[i]= data[i]->GetBinContent(1);
-		binWidth[i] = data[i]->GetBinContent(2);
-		weightSum[i] = data[i]->GetBinContent(3);
+		binWidth[i] = data[i]->GetBinContent(3);
+		weightSum[i] = data[i]->GetBinContent(2);
+		cout << "cross section " << i << ": " << sigma[i] << endl;
+		cout << "weightSum " << i << ": " << weightSum[i] << endl;
 	}
+
 
 
 	// scaling 
 	minBias->Scale( sigma[0] / ( 2*TMath::Pi() * weightSum[0] * binWidth[0] * 2 * TMath::Pi()) );
 	minBias->Divide(line);
-	inel->Scale( sigma[1] / ( 2*TMath::Pi() * weightSum[1] * binWidth[1] * 2 * TMath::Pi()));
+	inel->Scale( sigma[1] / ( 2*TMath::Pi() * weightSum[1] * binWidth[1] * 2 * TMath::Pi() *2*dEta ));
 	inel->Divide(line);
 	hard->Divide(line);
 
 	// Drawing all three same plot
 	TCanvas *c1 = new TCanvas("c1");
 	c1->SetLogy();
+	minBias->SetYTitle("1/(2#pip_{T})(d#sigma^{2}/(d#etadp_{T}) [mb GeV^{-2}]");
 	minBias->Draw("hist");
 	inel->SetLineColor(kRed);
+	inel->SetYTitle("1/(2#pip_{T})(d#sigma^{2}/(d#etadp_{T}) [mb GeV^{-2}]");
 	inel->Draw("hist same");
 	hard->SetLineColor(kBlack);
+	hard->SetYTitle("1/(2#pip_{T})(d#sigma^{2}/(d#etadp_{T}) [mb GeV^{-2}]");
 	hard->Draw("same hist");
 	aliceResults->SetLineColor(kGreen);
 	aliceResults->Draw("hist same");

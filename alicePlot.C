@@ -87,6 +87,7 @@ void alicePlot()
 	double sigma[16];
 	double weightSum[16];
 	double binWidth[16];
+	double dEta = 0.8;
 
 	for (int i=0; i < 16; i++)
 	{
@@ -98,7 +99,7 @@ void alicePlot()
 
 		sumHpT[i] = (TH1F*)files[i]->Get("hpT");
 		raw[i] = (TH1F*)files[i]->Get("hpTRaw");
-		raw[i]->Scale( sigma[i] / (2*TMath::Pi()*weightSum[i]*binWidth[i]));
+		raw[i]->Scale( sigma[i] / (2*TMath::Pi()*weightSum[i]*binWidth[i] * 2*dEta)); //raw get scaled without pT division ??don't know if sigma and N are same??
 	}
 
 
@@ -118,34 +119,6 @@ void alicePlot()
 	dataSum->SetBinContent(1,totalSig);
 	dataSum-> SetBinContent(2,totalWeight);
 	dataSum-> SetBinContent(3,totalBinWidth);
-
-
-
-/*
-	//Drawing On Canvas 1
-	TCanvas *c1 = new TCanvas("c1");
-	c1->SetLogy();
-	for ( int i = 0; i < 16; i++)
-	{
-		hpT[i] = (TH1F*)files[i]->Get("hpT");
-		sumHpT[i] = (TH1F*)files[i]->Get("hpT");
-		raw[i] = (TH1F*)files[i]->Get("hpTRaw");
-		hpT[0]->SetMinimum(10e-10);
-		if (i%2 == 0) 
-		{
-			hpT[i]->SetLineColor(kBlue);
-			hpT[i]->Draw("same hist");
-		}
-		else 
-		{
-			hpT[i]->SetLineColor(kBlack);
-			hpT[i]->Draw("same hist");
-		}
-
-	}
-
-*/
-
 
 
 	// Summing the histograms, and drawing
