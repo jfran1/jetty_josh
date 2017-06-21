@@ -19,8 +19,16 @@ void ratioPlot()
 	TFile *f4 = TFile::Open("/Users/joshfrandsen/test/jetty/output/sum.root");
 	if (f4==0) cout<< "ERROR! File 4 didn't open" << endl;
 	else cout << "File 4 Opened!" << endl;
+
+	TFile *f5 = TFile::Open("/Users/joshfrandsen/test/jetty/output/HEPData-ins1241422-v1-Table1.root");
+	if (f5==0) cout<< "ERROR! File 5 didn't open" << endl;
+	else cout << "File 5 Opened!" << endl;
+	f5->cd("Table 1");
+
+
 	
 
+	TH1F *HEP = (TH1F*)gDirectory->Get("Hist1D_y3");
 
 	TFile *files[4] = {f1,f2,f3,f4};
 	TH1F *data[3];
@@ -77,7 +85,49 @@ void ratioPlot()
 	hardCopy3->Draw("hist");
 
 
+	TCanvas *c4 = new TCanvas("c4");
+	c4->SetLogy();
+	hardCopy1->SetLineColor(kBlue);
+	hardCopy1->Draw("hist");
+	hardCopy2->SetLineColor(kGreen);
+	hardCopy2->Draw("same hist");
+	hardCopy3->SetLineColor(kRed);
+	hardCopy3->Draw("same hist");
 
-	
+	TLegend *leg = new TLegend();
+	leg->AddEntry(hardCopy1, "hard/inel", "L");
+	leg->AddEntry(hardCopy2, "hard/minBias", "L");
+	leg->AddEntry(hardCopy3, "hard/inelNsd", "L");
+	leg->Draw("same");
+
+	TCanvas *c5 = new TCanvas("c5");
+	c5->SetLogy();
+	inel->SetLineColor(kRed);
+	inel->SetYTitle("d^{2}#sigma/(d#etadp_{T})[mb]");
+	inel->Draw("hist");
+	HEP->SetLineColor(kBlack);
+	HEP->Draw("hist same");
+
+	TLegend *leg2 = new TLegend();
+
+	leg->AddEntry(inel, "inel", "L");
+	leg->AddEntry(HEP, "Alice", "L");
+
+
+
+TFile *fout = TFile::Open("alice_inel.root" , "RECREATE");
+fout->cd();
+
+TF1 *line = new TF1("line", "pol1", 0, 100);
+line->SetParameter(0,0);
+line->SetParameter(1,1);
+
+TH1F *inelNorm = (TH1F*)inel->Clone();
+inelNorm->Divide(line);
+
+inelNorm->Write();
+HEP ->Write();
+line -> Write();
+fout->Close();	
 
 }

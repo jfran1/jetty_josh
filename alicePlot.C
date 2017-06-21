@@ -2,67 +2,67 @@
 void alicePlot()
 {
 
-	TFile *f1= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_2_4.root");
+	TFile *f1= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_2_4.root");
 	if (f1 ==0) cout<< "ERROR! File 1 didn't open" << endl;
 	else cout << "File 1 Opened!" << endl;
 
-	TFile *f2= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_4_6.root");
+	TFile *f2= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_4_6.root");
 	if (f2 ==0) cout<< "ERROR! File 2 didn't open" << endl;
 	else cout << "File 2 Opened!" << endl;
 
-	TFile *f3= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_6_9.root");
+	TFile *f3= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_6_9.root");
 	if (f3 ==0) cout<< "ERROR! File 3 didn't open" << endl;
 	else cout << "File 3 Opened!" << endl;	
 
-	TFile *f4= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_9_12.root");
+	TFile *f4= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_9_12.root");
 	if (f4 ==0) cout<< "ERROR! File 4 didn't open" << endl;
 	else cout << "File 4 Opened!" << endl;	
 
-	TFile *f5= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_12_15.root");
+	TFile *f5= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_12_15.root");
 	if (f5 ==0) cout<< "ERROR! File 5 didn't open" << endl;
 	else cout << "File 5 Opened!" << endl;	
 
-	TFile *f6= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_15_20.root");
+	TFile *f6= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_15_20.root");
 	if (f6 ==0) cout<< "ERROR! File 6 didn't open" << endl;
 	else cout << "File 6 Opened!" << endl;
 
-	TFile *f7= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_20_25.root");
+	TFile *f7= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_20_25.root");
 	if (f7 ==0) cout<< "ERROR! File 7 didn't open" << endl;
 	else cout << "File 7 Opened!" << endl;
 
-	TFile *f8= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_25_35.root");
+	TFile *f8= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_25_35.root");
 	if (f8 ==0) cout<< "ERROR! File 8 didn't open" << endl;
 	else cout << "File 8 Opened!" << endl;	
 
-	TFile *f9= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_35_45.root");
+	TFile *f9= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_35_45.root");
 	if (f9 ==0) cout<< "ERROR! File 9 didn't open" << endl;
 	else cout << "File 9 Opened!" << endl;	
 
-	TFile *f10= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_45_60.root");
+	TFile *f10= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_45_60.root");
 	if (f10 ==0) cout<< "ERROR! File 10 didn't open" << endl;
 	else cout << "File 10 Opened!" << endl;	
 
-	TFile *f11= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_60_80.root");
+	TFile *f11= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_60_80.root");
 	if (f11 ==0) cout<< "ERROR! File 11 didn't open" << endl;
 	else cout << "File 11 Opened!" << endl;
 
-	TFile *f12= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_80_120.root");
+	TFile *f12= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_80_120.root");
 	if (f12 ==0) cout<< "ERROR! File 12 didn't open" << endl;
 	else cout << "File 12 Opened!" << endl;
 
-	TFile *f13= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_120_180.root");
+	TFile *f13= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_120_180.root");
 	if (f13 ==0) cout<< "ERROR! File 13 didn't open" << endl;
 	else cout << "File 13 Opened!" << endl;	
 
-	TFile *f14= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_180_250.root");
+	TFile *f14= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_180_250.root");
 	if (f14 ==0) cout<< "ERROR! File 14 didn't open" << endl;
 	else cout << "File 14 Opened!" << endl;	
 
-	TFile *f15= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_250_350.root");
+	TFile *f15= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_250_350.root");
 	if (f15 ==0) cout<< "ERROR! File 15 didn't open" << endl;
 	else cout << "File 15 Opened!" << endl;	
 
-	TFile *f16= TFile::Open("/Users/joshfrandsen/test/jetty/output/alice_350_1.root");
+	TFile *f16= TFile::Open("/Users/joshfrandsen/test/jetty/output/hard13TeV_350_1.root");
 	if (f16 ==0) cout<< "ERROR! File 16 didn't open" << endl;
 	else cout << "File 16 Opened!" << endl;	
 
@@ -70,7 +70,7 @@ void alicePlot()
 
 
 
-	TFile *fout = TFile::Open("sum.root", "RECREATE");
+	TFile *fout = TFile::Open("13TeVSum.root", "RECREATE");
 	fout->cd();
 
 
@@ -83,6 +83,7 @@ void alicePlot()
 	TH2F *eta2pT[16];
 
 	TH1F *data[16];
+	TH1F *dataSum = new TH1F("dataSum", "",4,0,4);
 	double sigma[16];
 	double weightSum[16];
 	double binWidth[16];
@@ -101,6 +102,22 @@ void alicePlot()
 	}
 
 
+	double totalSig = 0;
+	double totalWeight = 0;
+	double totalBinWidth = 0;
+
+
+	// Fill new bin with sum of data
+	for (int i=0;i<16; i++)
+	{
+		totalSig += sigma[i];
+		totalWeight += weightSum[i];
+		totalBinWidth += binWidth[i];
+	}
+
+	dataSum->SetBinContent(1,totalSig);
+	dataSum-> SetBinContent(2,totalWeight);
+	dataSum-> SetBinContent(3,totalBinWidth);
 
 
 
@@ -138,9 +155,8 @@ void alicePlot()
 		raw[0]->Add(raw[i]);
 	}
 
-	raw[0]->Draw("hist");
 
-
+	dataSum->Write();
 	raw[0]->Write();
 	sumHpT[0]->Write();
 	fout->Close();
