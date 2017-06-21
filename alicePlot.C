@@ -67,10 +67,12 @@ void alicePlot()
 	else cout << "File 16 Opened!" << endl;	
 
 
-	TFile *f17 = TFile::Open("/Users/joshfrandsen/test/jetty/output/HEPData-ins1241422-v1-Table1.root");
-	if(f17 ==0) cout<< "ERROR! File 17 didn't open" << endl;
-	else cout << "File 17 Opened!" << endl;	
-	f17->cd("Table 1");
+
+
+
+	TFile *fout = TFile::Open("sum.root", "RECREATE");
+	fout->cd();
+
 
 	// Setting up arrays of histograms and files
 	TFile *files[16] = {f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16};
@@ -78,9 +80,31 @@ void alicePlot()
 	TH1F *hpT[16];
 	TH1F *sumHpT[16];
 	TH1F *raw[16];
-	TH1F *HEP = (TH1F*)f17->Get("Hist1D_y3_e2");
 	TH2F *eta2pT[16];
 
+	TH1F *data[16];
+	double sigma[16];
+	double weightSum[16];
+	double binWidth[16];
+
+	for (int i=0; i < 16; i++)
+	{
+
+		data[i] = (TH1F*)files[i]->Get("data");
+		sigma[i] = data[i]->GetBinContent(1);
+		weightSum[i] = data[i]->GetBinContent(2);
+		binWidth[i] = data[i]->GetBinContent(3);
+
+		sumHpT[i] = (TH1F*)files[i]->Get("hpT");
+		raw[i] = (TH1F*)files[i]->Get("hpTRaw");
+		raw[i]->Scale( sigma[i] / (2*TMath::Pi()*weightSum[i]*binWidth[i]));
+	}
+
+
+
+
+
+/*
 	//Drawing On Canvas 1
 	TCanvas *c1 = new TCanvas("c1");
 	c1->SetLogy();
@@ -103,6 +127,10 @@ void alicePlot()
 
 	}
 
+*/
+
+
+
 	// Summing the histograms, and drawing
 	for (int i =1; i<16; i++)
 	{
@@ -110,16 +138,12 @@ void alicePlot()
 		raw[0]->Add(raw[i]);
 	}
 
-	TCanvas *c2 = new TCanvas("c2");
-	c2->SetLogy();
-	sumHpT[0]->SetTitle("");
-	sumHpT[0]->SetLineColor(kRed);
-	sumHpT[0]->Draw("hist");
-	raw[0]->Draw("hist same");
+	raw[0]->Draw("hist");
 
 
-
-
+	raw[0]->Write();
+	sumHpT[0]->Write();
+	fout->Close();
 
 
 
