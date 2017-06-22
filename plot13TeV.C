@@ -51,7 +51,7 @@ void plot13TeV()
 
 
 	// scaling 
-	minBias->Scale( sigma[0] / ( 2*TMath::Pi() * weightSum[0] * binWidth[0] * 2 * TMath::Pi()) );
+	minBias->Scale( sigma[0] / ( 2*TMath::Pi() * weightSum[0] * binWidth[0] * 2 * TMath::Pi() *2*dEta) );
 	minBias->Divide(line);
 	inel->Scale( sigma[1] / ( 2*TMath::Pi() * weightSum[1] * binWidth[1] * 2 * TMath::Pi() *2*dEta ));
 	inel->Divide(line);
@@ -79,15 +79,21 @@ void plot13TeV()
 	leg->Draw("same");
 
 
+	inel->SetTitle("Inelastic");
+	minBias->SetTitle("Min Bias");
+	hard->SetTitle("Hard (dif pT_Hat bins)");
 
 
+
+// Write some histograms to root file
 TFile *fout = TFile::Open("13TeVPlots.root" , "RECREATE");
 fout->cd();
 
-inel->Write();
-minBias->Write();
-hard-> Write();
-aliceResults->Write();
+inel->Write("inel");
+minBias->Write("minBias");
+hard-> Write("hard");
+aliceResults->Write("aliceResults");
+
 fout->Close();	
 
 }
