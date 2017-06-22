@@ -58,6 +58,7 @@ void allEnergyAlice()
 	TCanvas *c1 = new TCanvas("c1");
 	c1->SetLogy();
 	TeV7->SetYTitle("1/(2#pip_{T})(d#sigma^{2}/(d#etadp_{T}) [mb GeV^{-2}]");
+	TeV7->SetXTitle("p_{T} [GeV]");
 	TeV7->SetLineColor(kRed);	
 	TeV7->Draw("hist");
 	TeV2->SetYTitle("1/(2#pip_{T})(d#sigma^{2}/(d#etadp_{T}) [mb GeV^{-2}]");
