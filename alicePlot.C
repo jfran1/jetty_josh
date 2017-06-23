@@ -81,6 +81,7 @@ void alicePlot()
 	TFile *files[16] = {f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16};
 	TH1F *aliceSkeleton[16];
 
+	aliceSkeleton[0] = (TH1F*)f1->Get("skeleton");
 	TF1 *fun = new TF1("fun","[0]+[1]*x",0,100);
     fun->SetParameter(0, 0);
     fun->SetParameter(1,1);
@@ -90,7 +91,7 @@ void alicePlot()
 	double weightSum[16];
 	double dEta = 0.8;
 
-	aliceSkeleton[0] = (TH1F*)f1->Get("skeleton");
+	
 	int numBins = ((aliceSkeleton[0]->GetSize())-2); // 2 for over/under flow
 	double skeletonBinWidth[numBins];
 
@@ -111,7 +112,7 @@ void alicePlot()
 
 		for(int j=1; j < numBins; j++)
 		{
-			aliceSkeleton[i]->SetBinContent(j, (aliceSkeleton[i]->GetBinContent(j))/skeletonBinWidth[j]);
+			aliceSkeleton[i]->SetBinContent(j, (aliceSkeleton[i]->GetBinContent(j)) / skeletonBinWidth[j]);
 		}
 
 		aliceSkeleton[i]->Scale(sigma[i] / (2*TMath::Pi() * weightSum[i] * 2*dEta) );
@@ -127,7 +128,9 @@ void alicePlot()
 	//ratio between pythia8 and Alice data
 	TH1F *copyAlice= (TH1F*)aliceSkeleton[0]->Clone();
 	copyAlice->Divide(realData);
+	copyAlice->Draw();
 
+	//Ploting
 	TCanvas *c1 = new TCanvas("pTDist");
 	aliceSkeleton[0]->SetLineColor(kRed);
 	aliceSkeleton[0]->SetTitle("pT Distributions at 7 TeV");
@@ -136,7 +139,6 @@ void alicePlot()
 	realData->SetMarkerStyle(3);
 	realData->SetLineColor(kRed+4);
 	realData->Draw(" same P hist");
-
 
 
 
