@@ -83,23 +83,20 @@ void allEnergyAlice()
 	leg->AddEntry(alice2TeV, "Alice 2.76 TeV", "L");
 	leg->AddEntry(alice1TeV, "Alice 0.9 TeV", "L");
 	leg->Draw("same");
-
-
 	TeV7->SetTitle("Pythia8 vs. Alice p_{T} Distribution");
 
 
+	// Write some histograms to root file
+	TFile *fout = TFile::Open("3EnergyPlots.root" , "RECREATE");
+	fout->cd();
 
-// Write some histograms to root file
-TFile *fout = TFile::Open("3EnergyPlots.root" , "RECREATE");
-fout->cd();
+	TeV2->Write("inel");
+	TeV7->Write("7TeV");
+	TeV1-> Write("1TeV");
+	alice7TeV->Write("alice7TeV");
+	alice2TeV->Write("alice2TeV");
+	alice1TeV->Write("alice1TeV");
 
-TeV2->Write("inel");
-TeV7->Write("7TeV");
-TeV1-> Write("1TeV");
-alice7TeV->Write("alice7TeV");
-alice2TeV->Write("alice2TeV");
-alice1TeV->Write("alice1TeV");
-
-fout->Close();	
+	fout->Close();	
 
 }
