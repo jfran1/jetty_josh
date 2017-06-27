@@ -56,9 +56,6 @@ void alicePlot()
 
 	files[16]->cd("Table 1");
 	TGraph *realData = (TGraph*)gDirectory->Get("Graph1D_y3");
-
-	TFile *fout = TFile::Open("7TeV_Hard_Alice.root", "RECREATE");
-	fout->cd();
 	
 	// Setting up arrays of histograms and files
 	TH1F *aliceSkeleton[16];
@@ -73,7 +70,7 @@ void alicePlot()
 	double sigma[16];
 	double weightSum[16];
 	double dEta = 0.8;
-
+	TH2F *sigVspThat[16];
 	TH1F *inel7TeV = (TH1F*)files[17]->Get("skeleton");
 	TH1F *inelData = (TH1F*)files[17]->Get("data");
 	double inelSig = inelData->GetBinContent(1);
@@ -97,6 +94,7 @@ void alicePlot()
 	for(int i=0; i < 16; i++)
 	{
 		aliceSkeleton[i] = (TH1F*)files[i]->Get("skeleton");
+		sigVspThat[i] = (TH2F*)files[i]->Get("sigmaPtHat");
 		data[i] = (TH1F*)files[i]->Get("data");
 		sigma[i] = data[i]->GetBinContent(1);
 		weightSum[i] = data[i]->GetBinContent(2);
@@ -131,6 +129,12 @@ void alicePlot()
 				cout << "[i] adding " << i << " " << aliceSkeleton[i]->GetName() << " to " << hsum[j]->GetName() << endl;
 			}
 		}
+	}
+
+	TH2F *sigVsPtHat_sum = (TH2F*)sigVspThat[0]->Clone("sigVsPtHat_sum");
+	for (int i=0; i < 16; i++)
+	{
+		sigVsPtHat_sum->Add(sigVspThat[i]);
 	}
 
 	//ratio between pythia8 and Alice data
@@ -174,12 +178,6 @@ void alicePlot()
 	c1->SetLogy();
 	c1->SetLogx();
 
-	inel7TeV->Write("inel7TeV");
-	aliceSkeleton[0]->Write("pythia8");
-	copyAlice->Write("ratio");
-	realData->Write("AliceData");
-	fout->Close();
-
 	inel7TeV->SetName("Inelastic");
 	TH1F *hratios[4];
 	for (int j =0; j < 3; j++)
@@ -197,4 +195,20 @@ void alicePlot()
 			hratios[j]->Draw("hist l same");
 	}
 	gPad->BuildLegend();
+
+	TCanvas *c3 = new TCanvas();
+	sigVsPtHat_sum->Draw("contz");
+	c3->SetLogz();
+
+	
+	// write to root file
+	TFile *fout = TFile::Open("7TeV_Hard_Alice.root", "RECREATE");
+	fout->cd();
+
+	inel7TeV->Write("inel7TeV");
+	aliceSkeleton[0]->Write("pythia8");
+	copyAlice->Write("ratio");
+	realData->Write("AliceData");
+	fout->Close();
+
 }
