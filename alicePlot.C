@@ -145,31 +145,36 @@ void alicePlot()
 	TCanvas *c1 = new TCanvas("pTDist");
 	realData->SetMarkerStyle(24);
 	realData->SetLineColor(kBlack);
+	realData->SetMarkerColor(kBlack);
 
 	TLegend *leg = new TLegend();
 	for (int j = 0; j < 3; j++)
 	{
 		hsum[j]->SetMinimum(1.e-12);
 		hsum[j]->SetMaximum(5.e4);
-		hsum[j]->SetLineColor(kRed);
-		hsum[j]->SetLineStyle(1 + j);
+		hsum[j]->SetLineColor(kViolet+j);
+		hsum[j]->SetLineStyle(1+j);
+		hsum[j]->SetMarkerColor(kViolet+(j+2));
+		hsum[j]->SetMarkerStyle(25+j);
 		hsum[j]->SetLineWidth(2);
 		if (j == 0)
 		{
-			hsum[j]->Draw("same hist L");
+			hsum[j]->Draw("same hist p e");
 			hsum[j]->SetYTitle("1/(2#pip_{T})d^{2}#sigma/(d#etadp_{T}) [mb c^{2}/GeV^{2}]");
 		}
 
 		else
-			hsum[j]->Draw("same hist L");			
+			hsum[j]->Draw("same hist p e");			
 			leg->AddEntry(hsum[j], hsum[j]->GetTitle());
 	}
-	realData->Draw(" P same");
+	realData->Draw(" e P same");
 
 	inel7TeV->SetLineColor(kBlue);
+	inel7TeV->SetMarkerStyle(24);
+	inel7TeV->SetMarkerColor(kBlue);
 	inel7TeV->SetLineWidth(2);
 	inel7TeV->SetLineStyle(9);
-	inel7TeV->Draw("same hist L");
+	inel7TeV->Draw("same hist  p e");
 
 	leg->AddEntry(inel7TeV, "Inelastic");
 	leg->AddEntry(realData, "Alice Data", "pl");
@@ -200,7 +205,7 @@ void alicePlot()
 	sigVsPtHat_sum->Draw("contz");
 	c3->SetLogz();
 
-	
+
 	// write to root file
 	TFile *fout = TFile::Open("7TeV_Hard_Alice.root", "RECREATE");
 	fout->cd();
