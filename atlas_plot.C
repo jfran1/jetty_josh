@@ -29,6 +29,7 @@ void atlas_plot()
 		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_40_50.root",   	// 3
 		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_50_-1.root",   	// 4
 		"/Users/joshfrandsen/test/jetty/output/atlas_data.root"         ,	// 5
+		"/Users/joshfrandsen/test/jetty/output/default_output.root"         ,	// 6 messing with NTuples		
 		0
 	};
 

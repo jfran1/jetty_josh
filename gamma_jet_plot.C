@@ -28,6 +28,8 @@ void gamma_jet_plot()
 		}
 	}
 
+	TFile *out = new TFile("gamma_jet_output.root", "RECREATE");
+	out->cd();
 
 	TH1F *gamma_prompt[5];
 	TH1F *jet[5];
@@ -83,7 +85,6 @@ void gamma_jet_plot()
 		sigma[i] = norm[i]->GetBinContent(1);
 		weightSum[i] = norm[i]->GetBinContent(2);
 	}
-
 
 	// NORMALIZTION
 	// ############################################################################
