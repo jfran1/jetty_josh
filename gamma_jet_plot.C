@@ -55,7 +55,7 @@ void gamma_jet_plot()
 	// ###########################################################################
 	for (int i =0; i < 5; i++)
 	{
-		gamma_prompt[i] = (TH1F*)files[i]->Get("gammaPrompt"); // filter for hard gamma
+		gamma_prompt[i] = (TH1F*)files[i]->Get("gammaPrompt");
 		jet[i] = (TH1F*)files[i]->Get("jet");
 		dPhi_pT[i] = (TH2F*)files[i]->Get("dphi_pT");
 		dJet_pT[i] = (TH2F*)files[i]->Get("dJet_pT");
@@ -65,20 +65,22 @@ void gamma_jet_plot()
 		bin40[i] = dJet_pT[i]->GetXaxis()->FindBin(40);
 		bin80[i] = dJet_pT[i]->GetXaxis()->FindBin(80);
 		bin120[i] = dJet_pT[i]->GetXaxis()->FindBin(120);
+		std::cout << "[i] bins -> 20 GeV: " << bin20[i] << ", 40 GeV: " << bin40[i] << ", 80 GeV: " << bin80[i] << ", 120 GeV: " << bin120[i] << std::endl;
+		std::cout << "[i] bins -> 20 GeV: " << dJet_pT[i]->GetXaxis()->GetBinLowEdge(bin20[i]) << " - " << dJet_pT[i]->GetXaxis()->GetBinCenter(bin20[i]) << " - " << dJet_pT[i]->GetXaxis()->GetBinLowEdge(bin20[i]) + dJet_pT[i]->GetXaxis()->GetBinWidth(bin20[i])<< std::endl;
 
 		dJet_projection_20_40[i] =dJet_pT[i]->ProjectionY("dJet_projection_20_40", bin20[i],bin40[i]);
 		dJet_projection_40_80[i] =dJet_pT[i]->ProjectionY("dJet_projection_40_80", bin40[i],bin80[i]);
 		dJet_projection_80_120[i] =dJet_pT[i]->ProjectionY("dJet_projection_80_120", bin80[i],bin120[i]);
-		dJet_projection_20_40[i]->Rebin(2);
-		dJet_projection_40_80[i]->Rebin(2);
-		dJet_projection_80_120[i]->Rebin(2);	
+		dJet_projection_20_40[i]->Rebin(5);
+		dJet_projection_40_80[i]->Rebin(5);
+		dJet_projection_80_120[i]->Rebin(5);	
 		
 		dJet_projection_max_20_40[i] =dJet_pT_max[i]->ProjectionY("dJet_projection_max_20_40", bin20[i],bin40[i]);
 		dJet_projection_max_40_80[i] =dJet_pT_max[i]->ProjectionY("dJet_projection_max_40_80", bin40[i],bin80[i]);
 		dJet_projection_max_80_120[i] =dJet_pT_max[i]->ProjectionY("dJet_projection_max_80_120", bin80[i],bin120[i]);	
-		dJet_projection_max_20_40[i]->Rebin(2);
-		dJet_projection_max_40_80[i]->Rebin(2);
-		dJet_projection_max_80_120[i]->Rebin(2);
+		dJet_projection_max_20_40[i]->Rebin(5);
+		dJet_projection_max_40_80[i]->Rebin(5);
+		dJet_projection_max_80_120[i]->Rebin(5);
 
 		norm[i] = (TH1F*)files[i]->Get("norm");
 
@@ -90,15 +92,15 @@ void gamma_jet_plot()
 	// ############################################################################
 	for (int i = 0; i < 5; i++)
 	{
-		gamma_prompt[i]->Scale( (sigma[i]) / (weightSum[i] * gamma_prompt[i]->GetBinWidth(1)) );
-		jet[i] -> Scale( (sigma[i]) / (weightSum[i] * jet[i]->GetBinWidth(1)) );
-		dJet_projection_20_40[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_20_40[i]->GetBinWidth(1)) );	
-		dJet_projection_40_80[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_40_80[i]->GetBinWidth(1)) );	
-		dJet_projection_80_120[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_80_120[i]->GetBinWidth(1)) );	
+		// gamma_prompt[i]->Scale( (sigma[i]) / (weightSum[i] * gamma_prompt[i]->GetBinWidth(1)) );
+		// jet[i] -> Scale( (sigma[i]) / (weightSum[i] * jet[i]->GetBinWidth(1)) );
+		// dJet_projection_20_40[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_20_40[i]->GetBinWidth(1)) );	
+		// dJet_projection_40_80[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_40_80[i]->GetBinWidth(1)) );	
+		// dJet_projection_80_120[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_80_120[i]->GetBinWidth(1)) );	
 
-		dJet_projection_max_20_40[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_max_20_40[i]->GetBinWidth(1)) );	
-		dJet_projection_max_40_80[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_max_40_80[i]->GetBinWidth(1)) );	
-		dJet_projection_max_80_120[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_max_80_120[i]->GetBinWidth(1)) );			
+		// dJet_projection_max_20_40[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_max_20_40[i]->GetBinWidth(1)) );	
+		// dJet_projection_max_40_80[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_max_40_80[i]->GetBinWidth(1)) );	
+		// dJet_projection_max_80_120[i] -> Scale( (sigma[i]) / (weightSum[i] * dJet_projection_max_80_120[i]->GetBinWidth(1)) );			
 	}
 
 	// GETT SUM OF EACH PT HAT BIN
