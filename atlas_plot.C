@@ -1,36 +1,14 @@
-// Takes ratio of TH1 with respect to TGraph
-// ###########################################################################
-TH1F *ratio_to_a_graph(TH1F *h, TGraph *gr)
-{
-	TString newName = TString::Format("%s_ratio_to_%s", h->GetName(), gr->GetName());
-	TH1F *reth = (TH1F*)h->Clone(newName.Data());
-	for (int i = 1; i < reth->GetNbinsX(); i++)
-	{
-		double x = reth->GetBinCenter(i);
-		double r = reth->GetBinContent(i) / gr->Eval(x);
-		reth->SetMinimum(0);
-		reth->SetMaximum(3);
-		reth->SetBinContent(i, r);
-		reth->SetBinError(i, 0);
-	}
-	return reth;
-}
-
-
-
-// Start main plot
 void atlas_plot()
 {
 	//################ OPENING FILES #################
 	const char *fnames[] = {
-		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_10_20.root",   	// 0
-		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_20_30.root",   	// 1
-		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_30_40.root",   	// 2
-		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_40_50.root",   	// 3
-		"/Users/joshfrandsen/test/jetty/output/atlas_prompt_50_-1.root",   	// 4
-		"/Users/joshfrandsen/test/jetty/output/atlas_data.root"         ,	// 5
-		"/Users/joshfrandsen/test/jetty/output/default_output.root"         ,	// 6 messing with NTuples		
-		0
+		"/Users/joshfrandsen/test/jetty/output/prompt_atlas_100_200.root",   	// 0
+		"/Users/joshfrandsen/test/jetty/output/prompt_atlas_200_300.root",   	// 1
+		"/Users/joshfrandsen/test/jetty/output/prompt_atlas_300_500.root",   	// 2
+		"/Users/joshfrandsen/test/jetty/output/prompt_atlas_500_700.root",   	// 3
+		"/Users/joshfrandsen/test/jetty/output/prompt_atlas_700_1000.root",   	// 4
+		"/Users/joshfrandsen/test/jetty/output/atlas_data.root"          ,		// 5
+		0 
 	};
 
 	int _tmp = 0;
@@ -52,11 +30,9 @@ void atlas_plot()
 
 	
 	files[5]->cd("Table 1");
-	TGraph *atlas_data = (TGraph*)gDirectory->Get("Graph1D_y1");
+	TH1F *atlas_data = (TH1F*)gDirectory->Get("Hist1D_y1");
 
 	TH1F *gamma_prompt[5];
-	TH1F *gamma_decay[5];
-	TH1F *jet[5];
 	TH1F *norm[5];
 
 	double sigma[5];
@@ -66,160 +42,87 @@ void atlas_plot()
 	// ###########################################################################
 	for (int i =0; i < 5; i++)
 	{
-		gamma_prompt[i] = (TH1F*)files[i]->Get("gammaPrompt"); // filter for hard gamma
-		gamma_decay[i] = (TH1F*)files[i]->Get("decayGamma"); 
-		jet[i] = (TH1F*)files[i]->Get("jet");
+		gamma_prompt[i] = (TH1F*)files[i]->Get("gamma_prompt"); 
 		norm[i] = (TH1F*)files[i]->Get("norm");
 
 		sigma[i] = norm[i]->GetBinContent(1);
 		weightSum[i] = norm[i]->GetBinContent(2);
 	}
+
 	// NORMALIZTION
 	// ############################################################################
 	for (int i = 0; i < 5; i++)
 	{
-		gamma_prompt[i]->Scale( (1.e9 * sigma[i]) / (weightSum[i] * gamma_prompt[i]->GetBinWidth(1)) );
-		gamma_decay[i]->Scale( (1.e9 * sigma[i]) / (weightSum[i] * gamma_decay[i]->GetBinWidth(1)) ) ;
-		jet[i] -> Scale( (1.e9 * sigma[i]) / (weightSum[i] * jet[i]->GetBinWidth(1)) );
+		for(int j=0; j < gamma_prompt[i]->GetSize();j++)
+		{
+			gamma_prompt[i]->SetBinContent(j, gamma_promp[i]->GetBinContent(j) / gamma_prompt[i]->GetBinWidth(j) );
+		}
+		
+		gamma_prompt[i]->Scale( (1.e9 * sigma[i]) / weightSum[i] );
 	}
 
 	// GETT SUM OF EACH PT HAT BIN
 	// #############################################################################
 	TH1F *gamma_prompt_sum = (TH1F*)gamma_prompt[0]->Clone("gamma_prompt_sum");
-	TH1F *gamma_decay_sum = (TH1F*)gamma_decay[0]->Clone("gamma_decay_sum");
-	TH1F *jet_sum = (TH1F*)jet[0]->Clone("jet_sum");
 
 	for(int i=1; i < 5; i++)
 	{
 		gamma_prompt_sum->Add(gamma_prompt[i]);
-		gamma_decay_sum->Add(gamma_decay[i]);
-		jet_sum->Add(jet[i]);
 	}
 
 
-	TH1F *prompt_decay_ratio = (TH1F*)gamma_prompt_sum->Clone("prompt_decay_ratio"); // for ratio
-	TH1F *gamma_ratio = ratio_to_a_graph(gamma_prompt_sum, atlas_data); //for Ratio
+	TH1F *gamma_ratio = (TH1F*)gamma_prompt_sum->Clone("gamma_ratio");
+	gamma_ratio->Divide(atlas_data);
 
 	// DRAWING HISTOGRAMS
 	// #############################################################################
-	TCanvas *c1 = new TCanvas("gamma_prompt_pTHatBins");
+	TCanvas *c1 = new TCanvas("gamma_prompt");
 	TCanvas *c2 = new TCanvas("gamma_atlas_pythia_ratio");
-	TCanvas *c3 = new TCanvas("gamma_atlas_pythia");
-	TCanvas *c4 = new TCanvas("decay_cross_section");
-	TCanvas *c5 = new TCanvas("prompt_decay_ratio");
-	TCanvas *c6 = new TCanvas("Jet");
-
-	for(int i=0;i<5; i++)
-	{
-		gamma_prompt[i]->SetLineColor(kAzure+i);
-		gamma_prompt[i]->SetMarkerColor(kAzure+i);
-		gamma_prompt[i]->SetMarkerStyle(24+i);
-		gamma_prompt[i]->SetLineWidth(2);
-		gamma_prompt[i]->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [pb / GeV]");
-		gamma_prompt[i]->SetTitle("prompt p_{T}^{#gamma}  #sqrt{s} = 7 TeV #hat{p_{T}} > 50 GeV");
-		// gamma_prompt[i]->SetMinimum(1.e-6);
-
-		if(i==0)
-		{
-			c1->cd();
-			gamma_prompt[i]->Draw("pe");
-		}
-		else
-		{
-			c1->cd();
-			gamma_prompt[i]->Draw("same pe");
-		}
-	}
 	
 	gamma_prompt_sum->SetLineColor(kRed);
 	gamma_prompt_sum->SetMarkerColor(kRed);
 	gamma_prompt_sum->SetLineWidth(2);
-	gamma_prompt_sum->SetMarkerStyle(24);
+	gamma_prompt_sum->SetMarkerStyle(27);
 	gamma_prompt_sum->SetXTitle("p_{T}^{#gamma} GeV");
-	gamma_prompt_sum->SetTitle("ATLAS vs. PYTHIA8");
+	gamma_prompt_sum->SetTitle("Prompt Photons ATLAS vs. PYTHIA8");
 	gamma_prompt_sum->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [pb / GeV]");
+
+	atlas_data->SetLineColor(kBlack);
+	atlas_data->SetMarkerColor(kBlack);
+	atlas_data->SetLineWidth(2);
+	atlas_data->SetMarkerStyle(20);
 
 	gamma_ratio->SetMarkerStyle(24);
 	gamma_ratio->SetMarkerColor(kRed);
 	gamma_ratio->SetLineColor(kRed);
 	gamma_ratio->SetYTitle("Ratio");
 	gamma_ratio->SetXTitle("p_{T} [GeV]");
-	gamma_ratio->SetTitle("PYTHIA8 (All but decay photons)/ATLAS ");
-
-	gamma_decay_sum->SetLineColor(kRed);
-	gamma_decay_sum->SetLineWidth(2);
-	gamma_decay_sum->SetMarkerStyle(24);
-	gamma_decay_sum->SetMarkerColor(kRed);
-	gamma_decay_sum->SetTitle("Decay #gamma #sqrt{s} = 7 TeV");
-	gamma_decay_sum->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [pb / GeV] ");
-
-	jet_sum->SetLineColor(kRed);
-	jet_sum->SetLineWidth(2);
-	jet_sum->SetMarkerStyle(24);
-	jet_sum->SetMarkerColor(kRed);
-	jet_sum->SetTitle("#gamma+jet #sqrt{s} = 7 TeV");
-	jet_sum->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [pb / GeV] ");
-
-	prompt_decay_ratio->Divide(gamma_decay_sum);
-	prompt_decay_ratio->SetMarkerStyle(24);
-	prompt_decay_ratio->SetMarkerColor(kRed);
-	prompt_decay_ratio->SetYTitle("Ratio");
-	prompt_decay_ratio->SetXTitle("p_{T} [GeV]");
-	prompt_decay_ratio->SetTitle("prompt #gamma/ decay #gamma ");
-
-
-	c2->cd();
-	gamma_ratio->Draw("pe");
-
-	c3->cd();
-	gamma_prompt_sum->Draw("pe");
-	atlas_data->Draw("same");
-
-	c4->cd();
-	gamma_decay_sum->Draw("pe");
-		
-	c5->cd();
-	prompt_decay_ratio->Draw("pe");
-
-	c6->cd();
-	jet_sum->Draw("pe");
-
+	gamma_ratio->SetTitle("PYTHIA8/ATLAS ");
 
 	c1->SetLogy();
-	c3->SetLogy();
-	c4->SetLogy();
-	c5->SetLogy();
-	c6->SetLogy();
 
 	// MAKE & DRAW LEGEND
 	// #############################################################################	
 	TLegend *leg1 = new TLegend();
 	TLegend *leg2 = new TLegend();
-	TLegend *leg3 = new TLegend();
-	TLegend *leg4 = new TLegend();
-	TLegend *leg5 = new TLegend(); 
-	TLegend *leg6 = new TLegend(); 
-	TLegend *leg7 = new TLegend();
 
 	
-	leg1->AddEntry(gamma_prompt[0], "50 < #hat{p_{T}} < 100 GeV");
-	leg1->AddEntry(gamma_prompt[1], "100 < #hat{p_{T}} < 200 GeV");
-	leg1->AddEntry(gamma_prompt[2], "200 < #hat{p_{T}} < 300 GeV");
-	leg1->AddEntry(gamma_prompt[3], "300 < #hat{p_{T}} < 500 GeV");	
-	leg1->AddEntry(gamma_prompt[4], "500 < #hat{p_{T}} < 700 GeV");
+	leg1->AddEntry(gamma_prompt_sum, "PYTHIA8" ,"pl");
+	leg1->AddEntry(atlas_data, "ATLAS","pl" );
 
 	leg2->AddEntry((TObject*)0, "|#eta^{#gamma}| < 1.37", " ");
 	leg2->AddEntry((TObject*)0, " #sqrt{s} = 7 TeV", " ");
 
-	leg3->AddEntry(gamma_prompt_sum, "PYTHIA8" );
-	leg3->AddEntry(atlas_data, "ATLAS","pl" );
 
 	c1->cd();
+	gamma_prompt_sum->Draw("pe");
+	atlas_data->Draw("same pe");
 	leg1->Draw("same");
-
-	c3->cd();
-	leg3->Draw("same");
 	leg2->Draw("same");
+
+	c2->cd();
+	gamma_ratio->Draw("pe");
+
 }
 
 
