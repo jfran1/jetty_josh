@@ -54,7 +54,9 @@ void test()
 	//######################################################################
 	TNtuple *tuples[nfiles];
 	TH1F *h_gammaPt[nfiles];
-	TH1F *h_dpt[nfiles];
+	TH1F *h_dpt_1[nfiles];
+	TH1F *h_dpt_2[nfiles];
+	TH1F *h_dpt_3[nfiles];
 	TH1F *projections[nfiles];
 	TH1F *norm[nfiles];
 	TH1F *test[nfiles];
@@ -64,63 +66,76 @@ void test()
 
 	//Get TNtuple from files 
 	//######################################################################
-	TCanvas *c1 = new TCanvas("Test1");
-	TCanvas *c2 = new TCanvas("Test2");
-	TCanvas *c3 = new TCanvas("TEST");
+	TCanvas *c1 = new TCanvas("dpt_20_40");
+	TCanvas *c2 = new TCanvas("dpt_40_80");
+	TCanvas *c3 = new TCanvas("dpt_80_120");
+	TCanvas *c4 = new TCanvas("TEMP");
 
-	for(int i =0; i<nfiles; i++)
-	{
-		test[i] = (TH1F*)files[i]->Get("test_hist");
-		
-		if(i !=0 )
-		{
-			test[0]->Add(test[i]);
-		}
-	}
-
-
-	c1->cd();
+	c4->cd();
 	for(int i=0; i < nfiles; i++)
 	{
 		norm[i] = (TH1F*)files[i]->Get("norm");
 		sigma[i] = norm[i]->GetBinContent(1);
 		weight[i] = norm[i]->GetBinContent(2);
 		tuples[i] = (TNtuple*)files[i]->Get("jet_space_pT");
-		// h_dpt[i] = tuple2Hist(tuples[i], "delta_pt");
 		
-		TString temp_string = TString::Format("delta_pt>>h_dpt%i", i);
-		TString hist_name = TString::Format("h_dpt%i", i);
-		h_dpt[i] = new TH1F(hist_name, "Title; #Deltap_{T}; counts", 500, -100, 100);
-		tuples[i]->Draw(temp_string, "gamma_pt > 20 && gamma_pt < 40", "");
-		h_dpt[i]->Rebin(5);
-		// h_dpt[i]->Scale( sigma[i] / (weight[i] * h_dpt[i]->GetBinWidth(1)) ); // normalize might be off because I'm looking at a cut of the data, so norm values might be off
+		TString plot_string_1 = TString::Format("delta_pt>>h_dpt_1_%i", i);
+		TString plot_string_2 = TString::Format("delta_pt>>h_dpt_2_%i", i);
+		TString plot_string_3 = TString::Format("delta_pt>>h_dpt_3_%i", i);
+		TString hist_name_1 = TString::Format("h_dpt_1_%i", i);
+		TString hist_name_2 = TString::Format("h_dpt_2_%i", i);
+		TString hist_name_3 = TString::Format("h_dpt_3_%i", i);
+		h_dpt_1[i] = new TH1F(hist_name_1, "Title; #Deltap_{T}; counts", 100, -100, 100);
+		h_dpt_2[i] = new TH1F(hist_name_2, "Title; #Deltap_{T}; counts", 100, -100, 100);
+		h_dpt_3[i] = new TH1F(hist_name_3, "Title; #Deltap_{T}; counts", 100, -100, 100);
 
-		c1->Close();
+		tuples[i]->Draw(plot_string_1, "gamma_pt > 20 && gamma_pt < 40", "");
+		tuples[i]->Draw(plot_string_2, "gamma_pt > 40 && gamma_pt < 80", "");
+		tuples[i]->Draw(plot_string_3, "gamma_pt > 80 && gamma_pt < 120", "");
+
+		h_dpt_1[i]->Scale( sigma[i] / (weight[i] * h_dpt_1[i]->GetBinWidth(1)) ); 
+		h_dpt_2[i]->Scale( sigma[i] / (weight[i] * h_dpt_2[i]->GetBinWidth(1)) ); 
+		h_dpt_3[i]->Scale( sigma[i] / (weight[i] * h_dpt_3[i]->GetBinWidth(1)) ); 
+
+		c4->Close();
 	}	
 
-	c3->cd();
-	test[0]->SetLineColor(kRed);
-	test[0]->SetMarkerStyle(27);
-	test[0]->SetMarkerColor(kRed);
-	test[0]->Rebin(5);
-	test[0]->Draw("hist pe");
 
+	TH1F *sum_20_40 = (TH1F*)h_dpt_1[0]->Clone("sum_20_40");
+	TH1F *sum_40_80 = (TH1F*)h_dpt_2[0]->Clone("sum_40_80");
+	TH1F *sum_80_120 = (TH1F*)h_dpt_3[0]->Clone("sum_80_120");
 
-	TH1F *clone_sum = (TH1F*)h_dpt[0]->Clone("sum");
 	for(int i =1; i < nfiles; i++)
 	{
-		clone_sum->Add(h_dpt[i]);
+		sum_20_40->Add(h_dpt_1[i]);
+		sum_40_80->Add(h_dpt_2[i]);
+		sum_80_120->Add(h_dpt_3[i]);
 	}
 
-	clone_sum->SetMarkerStyle(24);
-	clone_sum->SetMarkerColor(kRed);
-	clone_sum->SetLineColor(kRed);
-	clone_sum->SetLineWidth(2);
-	clone_sum->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [mb / GeV]");
+	sum_20_40->SetMarkerStyle(24);
+	sum_20_40->SetMarkerColor(kRed);
+	sum_20_40->SetLineColor(kRed);
+	sum_20_40->SetLineWidth(2);
+	sum_20_40->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [mb / GeV]");
 
+	sum_40_80->SetMarkerStyle(24);
+	sum_40_80->SetMarkerColor(kRed);
+	sum_40_80->SetLineColor(kRed);
+	sum_40_80->SetLineWidth(2);
+	sum_40_80->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [mb / GeV]");
+
+	sum_80_120->SetMarkerStyle(24);
+	sum_80_120->SetMarkerColor(kRed);
+	sum_80_120->SetLineColor(kRed);
+	sum_80_120->SetLineWidth(2);
+	sum_80_120->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [mb / GeV]");	
+	
+	c1->cd();	
+	sum_20_40->Draw("pe");
 	c2->cd();
-	clone_sum->Draw("pe");
+	sum_40_80->Draw(" pe");
+	c3->cd();
+	sum_80_120->Draw(" pe");
 
-	c1->SetLogy();
 
 }

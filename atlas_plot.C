@@ -31,6 +31,15 @@ void atlas_plot()
 	
 	files[5]->cd("Table 1");
 	TH1F *atlas_data = (TH1F*)gDirectory->Get("Hist1D_y1");
+	TH1F *atlas_error = (TH1F*)gDirectory->Get("Hist1D_y1_e1");
+
+	int num_bins = atlas_error->GetSize()-2;
+	double a_atlas_error[num_bins];
+	for(int i=0; i < num_bins ; i++)
+	{
+		a_atlas_error[i] = atlas_error->GetBinContent(i+1);
+	} 
+	atlas_data->SetError(a_atlas_error);
 
 	TH1F *gamma_prompt[5];
 	TH1F *norm[5];
@@ -49,13 +58,22 @@ void atlas_plot()
 		weightSum[i] = norm[i]->GetBinContent(2);
 	}
 
+	for(int i = 0; i < 5; i++)
+	{
+		for (int j=1; j < gamma_prompt[0]->GetSize()-1; j++)
+		{
+			std::cout << "[i] file " << i << " bin " << j << ": "  << gamma_prompt[i]->GetBinContent(j) << std::endl;
+		}
+	}
+
+
 	// NORMALIZTION
 	// ############################################################################
 	for (int i = 0; i < 5; i++)
 	{
-		for(int j=0; j < gamma_prompt[i]->GetSize();j++)
+		for(int j=1; j < gamma_prompt[i]->GetSize()-1;j++)
 		{
-			gamma_prompt[i]->SetBinContent(j, gamma_promp[i]->GetBinContent(j) / gamma_prompt[i]->GetBinWidth(j) );
+			gamma_prompt[i]->SetBinContent(j, gamma_prompt[i]->GetBinContent(j) / gamma_prompt[i]->GetBinWidth(j) );
 		}
 		
 		gamma_prompt[i]->Scale( (1.e9 * sigma[i]) / weightSum[i] );
@@ -85,7 +103,7 @@ void atlas_plot()
 	gamma_prompt_sum->SetMarkerStyle(27);
 	gamma_prompt_sum->SetXTitle("p_{T}^{#gamma} GeV");
 	gamma_prompt_sum->SetTitle("Prompt Photons ATLAS vs. PYTHIA8");
-	gamma_prompt_sum->SetYTitle("#frac{1}{N_{events}} #frac{d#sigma}{dp_{T}} [pb / GeV]");
+	gamma_prompt_sum->SetYTitle("#frac{d#sigma}{dp_{T}} [pb / GeV]");
 
 	atlas_data->SetLineColor(kBlack);
 	atlas_data->SetMarkerColor(kBlack);
@@ -95,6 +113,7 @@ void atlas_plot()
 	gamma_ratio->SetMarkerStyle(24);
 	gamma_ratio->SetMarkerColor(kRed);
 	gamma_ratio->SetLineColor(kRed);
+	gamma_ratio->SetLineWidth(0);			
 	gamma_ratio->SetYTitle("Ratio");
 	gamma_ratio->SetXTitle("p_{T} [GeV]");
 	gamma_ratio->SetTitle("PYTHIA8/ATLAS ");
@@ -115,13 +134,22 @@ void atlas_plot()
 
 
 	c1->cd();
+	std::cout << "[i] Size: " << gamma_prompt_sum->GetSize() << std::endl;
+	for (int i=1; i < gamma_prompt_sum->GetSize() -1 ; i++)
+	{
+		std:: cout << "[i] bin " << i << " counts: " << gamma_prompt_sum->GetBinContent(i) << std::endl; 
+		std::cout << "[i] # Error bin " << i << ": " << gamma_prompt_sum->GetBinError(i) << std::endl;
+	}
+
 	gamma_prompt_sum->Draw("pe");
 	atlas_data->Draw("same pe");
 	leg1->Draw("same");
 	leg2->Draw("same");
 
 	c2->cd();
-	gamma_ratio->Draw("pe");
+	gamma_ratio->SetMinimum(.5);
+	gamma_ratio->SetMaximum(1.5);
+	gamma_ratio->Draw("p");
 
 }
 
